@@ -3,8 +3,8 @@ object frmMain: TfrmMain
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'WARP + '
-  ClientHeight = 370
+  Caption = 'WARP +  | Ver : 0.2'
+  ClientHeight = 395
   ClientWidth = 589
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -15,6 +15,7 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 18
   object MainPage: TRzPageControl
@@ -23,9 +24,9 @@ object frmMain: TfrmMain
     Width = 589
     Height = 313
     Hint = ''
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alTop
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     UseGradients = False
     FixedDimension = 24
@@ -86,14 +87,46 @@ object frmMain: TfrmMain
         TabOrder = 3
         OnClick = chbpsiphonClick
       end
+      object GBLicense: TGroupBox
+        Left = 24
+        Top = 129
+        Width = 540
+        Height = 88
+        TabOrder = 4
+        object lblLicense: TLabel
+          Left = 16
+          Top = 32
+          Width = 138
+          Height = 18
+          Caption = 'Warp+ License Key :'
+        end
+        object edtLicense: TEdit
+          Left = 160
+          Top = 29
+          Width = 361
+          Height = 26
+          Enabled = False
+          TabOrder = 0
+          OnChange = edtLicenseChange
+        end
+      end
+      object chbLicense: TCheckBox
+        Left = 24
+        Top = 116
+        Width = 177
+        Height = 17
+        Caption = 'Enable Warp+ License'
+        TabOrder = 5
+        OnClick = chbLicenseClick
+      end
     end
     object TabSheet3: TRzTabSheet
       Caption = 'About'
       object logo: TImage
-        Left = 159
-        Top = 57
-        Width = 266
-        Height = 196
+        Left = 30
+        Top = 121
+        Width = 177
+        Height = 136
         Picture.Data = {
           0A544A504547496D616765A82B0000FFD8FFE000104A46494600010100000100
           010000FFE201D84943435F50524F46494C45000101000001C800000000043000
@@ -448,30 +481,21 @@ object frmMain: TfrmMain
         Stretch = True
       end
       object lblYousef: TRzLabel
-        Left = 167
-        Top = 31
-        Width = 117
-        Height = 18
-        Caption = 'Yousef Ghobadi'
+        Left = 30
+        Top = 25
+        Width = 534
+        Height = 72
+        Caption = 
+          'This software is dedicated to people who have worked for the fre' +
+          'edom of Iran'#39's internet without any financial concern and in abs' +
+          'olute silence,'#13'All peoples who are trying to maintain the free f' +
+          'low of information, we bow in front of them and we are proud of ' +
+          'them, including Yousef Ghobadi and Segaro.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
         Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentFont = False
-        WordWrap = True
-      end
-      object lblSegaro: TRzLabel
-        Left = 333
-        Top = 31
-        Width = 53
-        Height = 18
-        Caption = 'Segaro'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
+        Font.Style = []
         ParentFont = False
         WordWrap = True
       end
@@ -505,18 +529,46 @@ object frmMain: TfrmMain
     TabOrder = 2
     OnClick = btnStopClick
   end
+  object chbSystemProxy: TCheckBox
+    Left = 371
+    Top = 325
+    Width = 114
+    Height = 31
+    Caption = 'System Proxy'
+    TabOrder = 4
+    OnClick = chbSystemProxyClick
+  end
+  object FooterBar: TStatusBar
+    Left = 0
+    Top = 376
+    Width = 589
+    Height = 19
+    Panels = <
+      item
+        Bevel = pbNone
+        Text = 'Warp on Warp - Windows Client - By Yousef Ghobadi'
+        Width = 430
+      end
+      item
+        Bevel = pbNone
+        BiDiMode = bdLeftToRight
+        ParentBiDiMode = False
+        Text = 'Interface by : Nima Nikjoo'
+        Width = 70
+      end>
+  end
   object SysTray: TTrayIcon
     Animate = True
     PopupMenu = TrayMenu
     Visible = True
     OnDblClick = SysTrayDblClick
-    Left = 392
-    Top = 96
+    Left = 544
+    Top = 256
   end
   object TrayMenu: TPopupMenu
     AutoHotkeys = maManual
-    Left = 424
-    Top = 152
+    Left = 504
+    Top = 256
     object N1: TMenuItem
       Caption = 'Set System Proxy'
       OnClick = N1Click
@@ -541,6 +593,6 @@ object frmMain: TfrmMain
     ThreadName = 'CaptureWarp'
     OnRun = CaptureThreadRun
     Left = 472
-    Top = 96
+    Top = 256
   end
 end

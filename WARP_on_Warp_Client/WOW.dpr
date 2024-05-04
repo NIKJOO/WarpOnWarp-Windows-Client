@@ -11,6 +11,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.Title := 'Warp on Warp Client';
   TStyleManager.TrySetStyle('Windows10 Dark');
   Application.CreateForm(TfrmMain, frmMain);
   Application.Run;

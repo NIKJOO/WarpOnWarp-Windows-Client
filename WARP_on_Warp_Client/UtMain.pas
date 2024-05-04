@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,madKernel,System.Win.Registry,
-  RzTabs, IdBaseComponent, IdThreadComponent, Vcl.Imaging.jpeg,RzLabel;
+  RzTabs, IdBaseComponent, IdThreadComponent, Vcl.Imaging.jpeg,RzLabel,System.IniFiles,
+  Vcl.ComCtrls;
 
 
 
@@ -32,8 +33,13 @@ type
     chbIPv6: TCheckBox;
     chbIPv4: TCheckBox;
     chbpsiphon: TCheckBox;
+    GBLicense: TGroupBox;
+    chbLicense: TCheckBox;
+    lblLicense: TLabel;
+    edtLicense: TEdit;
+    chbSystemProxy: TCheckBox;
+    FooterBar: TStatusBar;
     lblYousef: TRzLabel;
-    lblSegaro: TRzLabel;
     procedure btnStartClick(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
     procedure CaptureThreadRun(Sender: TIdThreadComponent);
@@ -47,6 +53,10 @@ type
     procedure chbIPv4Click(Sender: TObject);
     procedure chbGoolClick(Sender: TObject);
     procedure chbpsiphonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure chbLicenseClick(Sender: TObject);
+    procedure edtLicenseChange(Sender: TObject);
+    procedure chbSystemProxyClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -57,7 +67,9 @@ end;
 
 
 var
-    frmMain: TfrmMain;
+ frmMain: TfrmMain;
+ SettingFile:TIniFile;
+ License:string;
 
 implementation
 
@@ -68,12 +80,17 @@ const
 {$R *.dfm}
 
 
+//==============================================================================
+
 procedure TfrmMain.btnExitClick(Sender: TObject);
 begin
  CaptureThread.Stop;
  Processes('warp.exe').Terminate(0);
+ RemoveSystemProxy;
  Application.Terminate;
 end;
+
+//==============================================================================
 
 procedure TfrmMain.btnStartClick(Sender: TObject);
 begin
@@ -90,6 +107,8 @@ begin
    end;
 end;
 
+//==============================================================================
+
 procedure TfrmMain.btnStopClick(Sender: TObject);
 begin
  CaptureThread.Terminate;
@@ -100,16 +119,19 @@ begin
  btnStart.Enabled := True;
 end;
 
+//==============================================================================
+
 procedure TfrmMain.CaptureThreadRun(Sender: TIdThreadComponent);
 var
  Params:string;
- Gool,IPv4,IPv6,psiphon:Boolean;
+ Gool,IPv4,IPv6,psiphon,lic:Boolean;
 begin
  Params  := '';
  Gool    := chbGool.Checked;
  IPv4    := chbIPv4.Checked;
  IPv6    := chbIPv6.Checked;
  psiphon := chbpsiphon.Checked;
+ lic     := chbLicense.Checked;
 
  if IPv4 then
   Params := Params + '-4 ';
@@ -119,66 +141,131 @@ begin
   Params := Params + '--cfon ';
  if Gool then
   Params := Params + '--gool ';
+ if lic then
+  Params := Params + '--key ' + '"'+ License +'"';
+
+
+
+
 
  RunProcessAndCaptureOutput(ExtractFilePath(Application.ExeName) + '\warp.exe ' + Params,loginfo)
 
 end;
 
+//==============================================================================
+
 procedure TfrmMain.chbGoolClick(Sender: TObject);
 begin
  if chbGool.Checked = True then
    begin
+    SettingFile.WriteString('Settings','WoW','True');
     chbpsiphon.Checked := False;
     chbpsiphon.Enabled := False;
    end
  else
     begin
+    SettingFile.WriteString('Settings','WoW','True');
     chbpsiphon.Checked := False;
     chbpsiphon.Enabled := True;
    end;
 end;
 
+//==============================================================================
+
 procedure TfrmMain.chbIPv4Click(Sender: TObject);
 begin
  if chbIPv4.Checked = True then
    begin
+    SettingFile.WriteString('Settings','IPv6','True');
     chbIPv6.Checked := False;
     chbIPv6.Enabled := False;
    end
  else
    begin
+    SettingFile.WriteString('Settings','IPv6','False');
     chbIPv6.Checked := False;
     chbIPv6.Enabled := True;
    end
 end;
 
+//==============================================================================
+
 procedure TfrmMain.chbIPv6Click(Sender: TObject);
 begin
  if chbIPv6.Checked = True then
    begin
+    SettingFile.WriteString('Settings','IPv4','True');
     chbIPv4.Checked := False;
     chbIPv4.Enabled := False;
    end
  else
    begin
+    SettingFile.WriteString('Settings','IPv4','False');
     chbIPv4.Checked := False;
     chbIPv4.Enabled := True;
    end
 end;
 
+//==============================================================================
+
+procedure TfrmMain.chbLicenseClick(Sender: TObject);
+begin
+ if chbLicense.Checked then
+ begin
+  edtLicense.Enabled := True;
+  lblLicense.Enabled := True;
+  SettingFile.WriteString('Settings','LicActivation','True');
+  edtLicense.Text := SettingFile.ReadString('Settings','License','');
+ end else
+ begin
+   edtLicense.Enabled := False;
+   lblLicense.Enabled := False;
+   SettingFile.WriteString('Settings','LicActivation','False');
+ end;
+
+end;
+
+//==============================================================================
+
 procedure TfrmMain.chbpsiphonClick(Sender: TObject);
 begin
  if chbpsiphon.Checked = True then
    begin
+    SettingFile.WriteString('Settings','psiphon','True');
     chbGool.Checked := False;
     chbGool.Enabled := False;
    end
  else
    begin
+    SettingFile.WriteString('Settings','psiphon','False');
     chbGool.Checked := False;
     chbGool.Enabled := True;
    end
 end;
+
+//==============================================================================
+
+procedure TfrmMain.chbSystemProxyClick(Sender: TObject);
+begin
+ if chbSystemProxy.Checked then
+ begin
+    if not SetSystemProxy('127.0.0.1',8086) then
+      MessageBoxA(Self.Handle,'Can''t set system proxy','Error',MB_ICONERROR);
+ end else
+ begin
+   if not RemoveSystemProxy then
+    MessageBoxA(Self.Handle,'Can''t change system proxy','Error',MB_ICONERROR);
+ end;
+end;
+
+//==============================================================================
+
+procedure TfrmMain.edtLicenseChange(Sender: TObject);
+begin
+ SettingFile.WriteString('Settings','License',edtLicense.Text);
+end;
+
+//==============================================================================
 
 procedure TfrmMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
@@ -187,6 +274,42 @@ begin
   CanClose := False;
 end;
 
+//==============================================================================
+
+procedure TfrmMain.FormShow(Sender: TObject);
+var
+ WoW,IP4,IP6,Cfon,License,LicAvtivation:String;
+begin
+ SettingFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'Setting.ini');
+ WoW  := SettingFile.ReadString('Settings','WoW',WoW);
+
+ if WoW = 'True' then chbGool.Checked := True else chbGool.Checked := False;
+
+ IP4  := SettingFile.ReadString('Settings','IPv4',IP4);
+ if IP4 = 'True' then chbIPv4.Checked := True else chbIPv4.Checked := False;
+
+ IP6  := SettingFile.ReadString('Settings','IPv6',IP6);
+ if IP6 = 'True' then chbIPv6.Checked := True else chbIPv6.Checked := False;
+
+ Cfon := SettingFile.ReadString('Settings','psiphon',Cfon);
+ if Cfon = 'True' then chbLicense.Checked := True else chbLicense.Checked := False;
+
+ License := SettingFile.ReadString('Settings','License',License);
+ LicAvtivation := SettingFile.ReadString('Settings','LicActivation',LicAvtivation);
+
+ if (Length(Trim(License)) <> 0) and (LicAvtivation = 'True') then
+ begin
+   chbLicense.Checked := True;
+   edtLicense.Text := License;
+ end else
+     begin
+       chbLicense.Checked := False;
+       edtLicense.Text := License;
+     end;
+end;
+
+//==============================================================================
+
 procedure TfrmMain.N1Click(Sender: TObject);
 begin
 
@@ -194,11 +317,16 @@ begin
   MessageBoxA(Self.Handle,'Can''t set system proxy','Error',MB_ICONERROR);
 end;
 
+//==============================================================================
+
 procedure TfrmMain.N2Click(Sender: TObject);
 begin
  if not RemoveSystemProxy then
   MessageBoxA(Self.Handle,'Can''t change system proxy','Error',MB_ICONERROR);
 end;
+
+//==============================================================================
+
 
 procedure TfrmMain.N5Click(Sender: TObject);
 begin
@@ -206,6 +334,8 @@ begin
  Processes('warp.exe').Terminate(0);
  Application.Terminate;
 end;
+
+//==============================================================================
 
 function TfrmMain.RemoveSystemProxy: Boolean;
 var
@@ -232,6 +362,8 @@ begin
     Reg.Free;
   end;
 end;
+
+//==============================================================================
 
 procedure TfrmMain.RunProcessAndCaptureOutput(const CmdLine: string;
   Memo: TMemo; HideLinesCount: Integer);
@@ -303,6 +435,7 @@ begin
   CloseHandle(PipeR);
 end;
 
+//==============================================================================
 
 function TfrmMain.SetSystemProxy(const ProxyIP: string;
   ProxyPort: Word): Boolean;
@@ -331,7 +464,7 @@ begin
   end;
 end;
 
-
+//==============================================================================
 
 procedure TfrmMain.SysTrayDblClick(Sender: TObject);
 begin
@@ -341,4 +474,5 @@ begin
   Application.Restore();
 end;
 
+//==============================================================================
 end.
