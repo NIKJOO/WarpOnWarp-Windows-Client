@@ -8,7 +8,6 @@
 
 <table>
     <tr>
-        <td></td>
         <td><img src="https://github.com/NIKJOO/WarpOnWarp-Windows-Client/blob/main/Pic/1.jpg" /></td>
         <td></td>
         <td><img src="https://github.com/NIKJOO/WarpOnWarp-Windows-Client/blob/main/Pic/2.jpg" /></td>
