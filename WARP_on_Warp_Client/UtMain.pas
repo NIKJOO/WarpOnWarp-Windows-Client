@@ -6,7 +6,24 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,madKernel,System.Win.Registry,
   RzTabs, IdBaseComponent, IdThreadComponent, Vcl.Imaging.jpeg,RzLabel,System.IniFiles,
-  Vcl.ComCtrls;
+  Vcl.ComCtrls, dxSkinsCore, dxSkinBasic, dxSkinBlack, dxSkinBlue,
+  dxSkinBlueprint, dxSkinCaramel, dxSkinCoffee, dxSkinDarkroom, dxSkinDarkSide,
+  dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle, dxSkinFoggy,
+  dxSkinGlassOceans, dxSkinHighContrast, dxSkiniMaginary, dxSkinLilian,
+  dxSkinLiquidSky, dxSkinLondonLiquidSky, dxSkinMcSkin, dxSkinMetropolis,
+  dxSkinMetropolisDark, dxSkinMoneyTwins, dxSkinOffice2007Black,
+  dxSkinOffice2007Blue, dxSkinOffice2007Green, dxSkinOffice2007Pink,
+  dxSkinOffice2007Silver, dxSkinOffice2010Black, dxSkinOffice2010Blue,
+  dxSkinOffice2010Silver, dxSkinOffice2013DarkGray, dxSkinOffice2013LightGray,
+  dxSkinOffice2013White, dxSkinOffice2016Colorful, dxSkinOffice2016Dark,
+  dxSkinOffice2019Black, dxSkinOffice2019Colorful, dxSkinOffice2019DarkGray,
+  dxSkinOffice2019White, dxSkinPumpkin, dxSkinSeven, dxSkinSevenClassic,
+  dxSkinSharp, dxSkinSharpPlus, dxSkinSilver, dxSkinSpringtime, dxSkinStardust,
+  dxSkinSummer2008, dxSkinTheAsphaltWorld, dxSkinTheBezier,
+  dxSkinsDefaultPainters, dxSkinValentine, dxSkinVisualStudio2013Blue,
+  dxSkinVisualStudio2013Dark, dxSkinVisualStudio2013Light, dxSkinVS2010,
+  dxSkinWhiteprint, dxSkinXmas2008Blue, dxCore, cxClasses, cxLookAndFeels,
+  dxSkinsForm;
 
 
 
@@ -40,6 +57,8 @@ type
     chbSystemProxy: TCheckBox;
     FooterBar: TStatusBar;
     lblYousef: TRzLabel;
+    LogScroll: TTimer;
+    Skin: TdxSkinController;
     procedure btnStartClick(Sender: TObject);
     procedure btnExitClick(Sender: TObject);
     procedure CaptureThreadRun(Sender: TIdThreadComponent);
@@ -57,12 +76,15 @@ type
     procedure chbLicenseClick(Sender: TObject);
     procedure edtLicenseChange(Sender: TObject);
     procedure chbSystemProxyClick(Sender: TObject);
+    procedure LogScrollTimer(Sender: TObject);
   private
     { Private declarations }
   public
   procedure RunProcessAndCaptureOutput(const CmdLine: string; Memo: TMemo; HideLinesCount: Integer = 0);
   function SetSystemProxy(const ProxyIP: string; ProxyPort: Word): Boolean;
   function RemoveSystemProxy: Boolean;
+  procedure ScrollToLastLine(Memo: TMemo);
+
 end;
 
 
@@ -94,6 +116,8 @@ end;
 
 procedure TfrmMain.btnStartClick(Sender: TObject);
 begin
+
+
  loginfo.Clear;
  if not FileExists(ExtractFilePath(Application.ExeName) + '\warp.exe') then
    MessageBox(self.Handle,'Can''t find "warp.exe"','Error',MB_ICONERROR)
@@ -133,6 +157,8 @@ begin
  psiphon := chbpsiphon.Checked;
  lic     := chbLicense.Checked;
 
+
+
  if IPv4 then
   Params := Params + '-4 ';
  if IPv6 then
@@ -141,14 +167,13 @@ begin
   Params := Params + '--cfon ';
  if Gool then
   Params := Params + '--gool ';
- if lic then
-  Params := Params + '--key ' + '"'+ License +'"';
+ if (lic) and (Length(Trim(edtLicense.Text)) <> 0) then
+  Params := Params + '--key ' +  edtLicense.Text ;
 
 
 
 
-
- RunProcessAndCaptureOutput(ExtractFilePath(Application.ExeName) + '\warp.exe ' + Params,loginfo)
+ RunProcessAndCaptureOutput(ExtractFilePath(Application.ExeName) + '\warp.exe ' + Params,loginfo);
 
 end;
 
@@ -310,6 +335,13 @@ end;
 
 //==============================================================================
 
+procedure TfrmMain.LogScrollTimer(Sender: TObject);
+begin
+SendMessage(loginfo.Handle, WM_VSCROLL, SB_LINEDOWN, 0);
+end;
+
+//==============================================================================
+
 procedure TfrmMain.N1Click(Sender: TObject);
 begin
 
@@ -436,6 +468,11 @@ begin
 end;
 
 //==============================================================================
+
+procedure TfrmMain.ScrollToLastLine(Memo: TMemo);
+begin
+  SendMessage(Memo.Handle, EM_LINESCROLL, 0,Memo.Lines.Count);
+end;
 
 function TfrmMain.SetSystemProxy(const ProxyIP: string;
   ProxyPort: Word): Boolean;

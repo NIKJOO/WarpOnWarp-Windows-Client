@@ -103,8 +103,9 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>WOW_Icon1.ico</Icon_MainIcon>
-        <UWP_DelphiLogo44>..\Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>..\Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png</UWP_DelphiLogo150>
+        <UWP_DelphiLogo44>Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png</UWP_DelphiLogo150>
+        <DCC_MapFile>3</DCC_MapFile>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -146,7 +147,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png" Configuration="Release" Class="UWP_DelphiLogo44">
+                <DeployFile LocalName="Q65EmbeII-KwY3edZJ_Exr2Uk_ZRVskY.png" Configuration="Release" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>

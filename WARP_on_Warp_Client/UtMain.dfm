@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'WARP +  | Ver : 0.2'
+  Caption = 'WARP +  | Ver : 0.2.1'
   ClientHeight = 395
   ClientWidth = 589
   Color = clBtnFace
@@ -24,9 +24,9 @@ object frmMain: TfrmMain
     Width = 589
     Height = 313
     Hint = ''
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     Align = alTop
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     UseGradients = False
     FixedDimension = 24
@@ -562,13 +562,13 @@ object frmMain: TfrmMain
     PopupMenu = TrayMenu
     Visible = True
     OnDblClick = SysTrayDblClick
-    Left = 544
-    Top = 256
+    Left = 416
+    Top = 176
   end
   object TrayMenu: TPopupMenu
     AutoHotkeys = maManual
-    Left = 504
-    Top = 256
+    Left = 352
+    Top = 184
     object N1: TMenuItem
       Caption = 'Set System Proxy'
       OnClick = N1Click
@@ -592,7 +592,19 @@ object frmMain: TfrmMain
     StopMode = smTerminate
     ThreadName = 'CaptureWarp'
     OnRun = CaptureThreadRun
-    Left = 472
-    Top = 256
+    Left = 408
+    Top = 120
+  end
+  object LogScroll: TTimer
+    Interval = 100
+    OnTimer = LogScrollTimer
+    Left = 328
+    Top = 120
+  end
+  object Skin: TdxSkinController
+    UseSkins = False
+    UseSkinsInPopupMenus = False
+    Left = 280
+    Top = 120
   end
 end
